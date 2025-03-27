@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import com.blogBernardo.cinema.DTO.CommentDto;
 import com.blogBernardo.cinema.service.ReviewService;
 
+import jakarta.validation.Valid;
+
 import java.util.List;
 import java.util.Optional;
 @RestController
@@ -20,12 +22,13 @@ public class ReviewController {
 
     // Endpoint para listar todas as reviews com paginação
     @GetMapping
-    public ResponseEntity<List<Review>> getReviews(@RequestParam(defaultValue = "1") int page, 
-                                                   @RequestParam(defaultValue = "5") int size) {
-        List<Review> reviews = reviewService.getReviewsByPage(page, size);
+    public ResponseEntity<List<Review>> getReviews(@RequestParam(defaultValue = "1") int page,@RequestParam(defaultValue = "5") int size,
+        @RequestParam(defaultValue = "date") String sortField,
+        @RequestParam(defaultValue = "desc") String sortDirection)
+    {
+        List<Review> reviews = reviewService.getReviewsByPage(page, size, sortField, sortDirection);
         return ResponseEntity.ok(reviews);
     }
-
     // Endpoint para buscar uma review pelo ID
     @GetMapping("/{id}")
     public ResponseEntity<Review> getReviewById(@PathVariable String id) {
@@ -35,7 +38,7 @@ public class ReviewController {
 
     // Endpoint para criar uma nova review
     @PostMapping
-    public ResponseEntity<Review> createReview(@RequestBody Review review) {
+    public ResponseEntity<Review> createReview(@Valid @RequestBody Review review) {
         Review savedReview = reviewService.sendReview(review);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedReview);
     }

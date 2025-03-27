@@ -8,4 +8,5 @@ import model.Review;
 
 @Repository
 public interface ReviewRepository extends MongoRepository<Review,String>{
+	
 }

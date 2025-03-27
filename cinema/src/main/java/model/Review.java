@@ -10,6 +10,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.blogBernardo.cinema.DTO.CommentDto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 
 @Document(collection="reviews")
 public class Review implements Serializable {
@@ -17,8 +20,11 @@ public class Review implements Serializable {
 
 	@Id
 	private String id;
+	@NotBlank(message = "O título não pode ser vazio")
 	private String title;
 	private Date date;
+    @NotBlank(message = "O conteúdo não pode ser vazio")
+    @Size(min = 10, message = "O conteúdo não pode ter menos de 10 caracteres")
 	private String content;
 	private List<CommentDto> comments;
 	
