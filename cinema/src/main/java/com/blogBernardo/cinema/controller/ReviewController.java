@@ -12,7 +12,9 @@ import com.blogBernardo.cinema.service.ReviewService;
 import jakarta.validation.Valid;
 
 import java.util.List;
+import java.util.Date;
 import java.util.Optional;
+
 @RestController
 @RequestMapping("/reviews")
 public class ReviewController {
@@ -22,13 +24,14 @@ public class ReviewController {
 
     // Endpoint para listar todas as reviews com paginação
     @GetMapping
-    public ResponseEntity<List<Review>> getReviews(@RequestParam(defaultValue = "1") int page,@RequestParam(defaultValue = "5") int size,
-        @RequestParam(defaultValue = "date") String sortField,
-        @RequestParam(defaultValue = "desc") String sortDirection)
-    {
+    public ResponseEntity<List<Review>> getReviews(@RequestParam(defaultValue = "1") int page,
+                                                   @RequestParam(defaultValue = "5") int size,
+                                                   @RequestParam(defaultValue = "date") String sortField,
+                                                   @RequestParam(defaultValue = "desc") String sortDirection) {
         List<Review> reviews = reviewService.getReviewsByPage(page, size, sortField, sortDirection);
         return ResponseEntity.ok(reviews);
     }
+
     // Endpoint para buscar uma review pelo ID
     @GetMapping("/{id}")
     public ResponseEntity<Review> getReviewById(@PathVariable String id) {
@@ -62,5 +65,26 @@ public class ReviewController {
     public ResponseEntity<List<CommentDto>> getCommentsFromReview(@PathVariable String id) {
         List<CommentDto> comments = reviewService.getCommentsFromReview(id);
         return comments != null ? ResponseEntity.ok(comments) : ResponseEntity.notFound().build();
+    }
+
+    // Endpoint para buscar reviews por título
+    @GetMapping("/search/byTitle")
+    public ResponseEntity<List<Review>> getReviewsByTitle(@RequestParam String title) {
+        List<Review> reviews = reviewService.getReviewsByTitle(title);
+        return reviews.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(reviews);
+    }
+
+    // Endpoint para buscar reviews por data
+    @GetMapping("/search/byDate")
+    public ResponseEntity<List<Review>> getReviewsByDate(@RequestParam Date date) {
+        List<Review> reviews = reviewService.getReviewsByDate(date);
+        return reviews.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(reviews);
+    }
+
+    // Endpoint para buscar reviews por título e data
+    @GetMapping("/search/byTitleAndDate")
+    public ResponseEntity<List<Review>> getReviewsByTitleAndDate(@RequestParam String title, @RequestParam Date date) {
+        List<Review> reviews = reviewService.getReviewsByTitleAndDate(title, date);
+        return reviews.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(reviews);
     }
 }

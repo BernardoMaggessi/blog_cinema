@@ -1,20 +1,18 @@
 package com.blogBernardo.cinema.service;
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import com.blogBernardo.cinema.DTO.CommentDto;
-
 import com.blogBernardo.cinema.repository.ReviewRepository;
-
 import exceptions.ReviewNotFoundException;
 import exceptions.ValidationException;
 import model.Review;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReviewService {
@@ -55,7 +53,7 @@ public class ReviewService {
         reviewRepository.deleteById(id);
     }
 
- // Método de busca paginada de reviews com ordenação
+    // Método de busca paginada de reviews com ordenação
     public List<Review> getReviewsByPage(int page, int size, String sortField, String sortDirection) {
         // Validação de parâmetros
         if (page < 1 || size < 1) {
@@ -80,7 +78,6 @@ public class ReviewService {
         return reviewRepository.findAll(pageRequest).getContent();
     }
 
-
     // Método para atualizar uma review
     public Review updateReview(String id, Review review) {
         if (!reviewRepository.existsById(id)) {
@@ -97,5 +94,20 @@ public class ReviewService {
             throw new ReviewNotFoundException(id);  // Lançando exceção se a review não for encontrada
         }
         return review.get().getComments();
+    }
+
+    // Método para buscar reviews por título
+    public List<Review> getReviewsByTitle(String title) {
+        return reviewRepository.findByTitleContainingIgnoreCase(title);
+    }
+
+    // Método para buscar reviews por data
+    public List<Review> getReviewsByDate(Date date) {
+        return reviewRepository.findByDate(date);
+    }
+
+    // Método para buscar reviews por título e data
+    public List<Review> getReviewsByTitleAndDate(String title, Date date) {
+        return reviewRepository.findByTitleContainingIgnoreCaseAndDate(title, date);
     }
 }
